@@ -104,9 +104,12 @@ export function Home() {
                     {s.date} · {s.sets.length}세트 기록됨
                   </div>
                 </div>
-                <button className="btn sm primary" onClick={() => navigate({ name: 'session', id: s.id! })}>
-                  이어하기
-                </button>
+                <span className="row">
+                  <button className="btn sm danger" onClick={() => db.sessions.delete(s.id!)}>버리기</button>
+                  <button className="btn sm primary" onClick={() => navigate({ name: 'session', id: s.id! })}>
+                    이어하기
+                  </button>
+                </span>
               </div>
             ))}
           </div>

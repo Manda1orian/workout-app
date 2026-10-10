@@ -55,9 +55,16 @@ export function StatsPage() {
   const bestSession = Math.max(0, ...totals)
   const allReps = totals.reduce((a, b) => a + b, 0)
 
-  // ---- 세션 추이 (최근 30회)
-  const recent = sessions.slice(-30)
-  const labels = recent.map((s) => formatShort(s.date))
+  // ---- 일별 추이 (최근 30일치 기록이 있는 날)
+  const daily = new Map<string, { total: number; maxSet: number }>()
+  for (const s of sessions) {
+    const cur = daily.get(s.date) ?? { total: 0, maxSet: 0 }
+    cur.total += tot(s)
+    cur.maxSet = Math.max(cur.maxSet, ...s.sets.map((x) => x.reps))
+    daily.set(s.date, cur)
+  }
+  const recent = Array.from(daily.entries()).sort(([a], [b]) => (a < b ? -1 : 1)).slice(-30)
+  const labels = recent.map(([d]) => formatShort(d))
   const baseOpts = {
     responsive: true,
     maintainAspectRatio: false,
@@ -153,12 +160,12 @@ export function StatsPage() {
       ) : (
         <>
           <div className="card">
-            <div className="card-title">세션별 총 횟수</div>
-            <div className="chart"><Line data={lineData(recent.map(tot))} options={baseOpts} /></div>
+            <div className="card-title">일별 총 횟수</div>
+            <div className="chart"><Line data={lineData(recent.map(([, v]) => v.total))} options={baseOpts} /></div>
           </div>
           <div className="card">
-            <div className="card-title">최대 세트 횟수</div>
-            <div className="chart"><Line data={lineData(recent.map((s) => Math.max(0, ...s.sets.map((x) => x.reps))))} options={baseOpts} /></div>
+            <div className="card-title">일별 최대 세트</div>
+            <div className="chart"><Line data={lineData(recent.map(([, v]) => v.maxSet))} options={baseOpts} /></div>
           </div>
           <div className="card">
             <div className="card-title">주간 볼륨 (최근 8주)</div>

@@ -23,6 +23,17 @@ export function takeFlash(): string | null {
 }
 
 export async function startSession(exercise: ExerciseId, plan: SessionPlan, state: ProgramState): Promise<number> {
+  // 같은 운동의 미완료 세션 정리: 빈 세션은 삭제, 기록이 있으면 이어하기
+  const pending = await db.sessions.where('exercise').equals(exercise).filter((s) => !s.completed).toArray()
+  const resumable = pending.find((s) => s.sets.length > 0 && s.planKey === plan.key)
+  for (const s of pending) {
+    if (s !== resumable && s.sets.length === 0) await db.sessions.delete(s.id!)
+  }
+  if (resumable) {
+    setFlash('기록 중이던 세션을 이어서 합니다.')
+    navigate({ name: 'session', id: resumable.id! })
+    return resumable.id!
+  }
   const meta: Session['meta'] = isArmstrong(state)
     ? { trainingReps: state.trainingReps }
     : { week: state.week, day: state.day, column: state.column, phase: state.phase }
