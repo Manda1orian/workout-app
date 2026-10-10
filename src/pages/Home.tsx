@@ -35,6 +35,11 @@ export function Home() {
   useEffect(() => {
     const f = takeFlash()
     if (f) showToast(f)
+    // 지난날의 빈 미완료 세션은 자동 정리
+    const today = todayKey()
+    void db.sessions
+      .filter((s) => !s.completed && s.sets.length === 0 && s.date < today)
+      .delete()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -92,7 +97,15 @@ export function Home() {
 
       {active && active.length > 0 && (
         <div className="card">
-          <div className="card-title">진행 중인 세션</div>
+          <div className="card-head">
+            <div className="card-title">진행 중인 세션</div>
+            <button
+              className="btn sm danger"
+              onClick={() => db.sessions.filter((s) => !s.completed && s.sets.length === 0).delete()}
+            >
+              빈 세션 모두 버리기
+            </button>
+          </div>
           <div className="list">
             {active.map((s) => (
               <div className="item" key={s.id}>
