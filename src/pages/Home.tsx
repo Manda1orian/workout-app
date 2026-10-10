@@ -163,8 +163,11 @@ export function Home() {
               </div>
             )}
             <div className="row">
-              <button className="btn primary grow" disabled={!plan} onClick={() => plan && begin(exercise, plan, state)}>
-                시작
+              <button
+                className="btn primary grow"
+                onClick={() => (plan ? begin(exercise, plan, state) : setPicker({ kind: 'options', exercise }))}
+              >
+                {plan ? '시작' : '세션 골라서 시작'}
               </button>
               <button className="btn" onClick={() => setPicker({ kind: 'options', exercise })}>
                 다른 세션
