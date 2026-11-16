@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>퍼스널 트레이닝 프로그램</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F5F1; --card:#FFFFFF; --ink:#1E2A2D; --sub:#5E6B6E; --line:#E4E0D6;
+  --acc:#2F7D6D; --acc2:#9CC8BC; --soft:#E5F2EE; --warn:#B4541A; --warnbg:#FCEFE6;
+  --prop:#B9B2A2; --wall:#ECE7DB; --band:#E08A3C;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:780px;margin:0 auto;padding:20px 16px 60px}
+header h1{font-size:22px;margin:4px 0 2px;font-weight:800;letter-spacing:-.3px}
+header p{margin:0;color:var(--sub);font-size:13.5px}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.badge{font-size:12px;background:var(--soft);color:var(--acc);padding:3px 9px;border-radius:999px;font-weight:600}
+.badge.w{background:var(--warnbg);color:var(--warn)}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:4px;overflow-x:auto;padding:12px 0 10px;margin-top:8px;border-bottom:1px solid var(--line)}
+nav button{flex:0 0 auto;border:0;background:transparent;font:inherit;font-size:14px;font-weight:600;color:var(--sub);padding:7px 12px;border-radius:999px;cursor:pointer}
+nav button.on{background:var(--ink);color:#fff}
+section{display:none;padding-top:16px}
+section.on{display:block}
+h2{font-size:18px;margin:6px 0 10px;font-weight:800}
+h3{font-size:15.5px;margin:0 0 6px;font-weight:700}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+.muted{color:var(--sub);font-size:13.5px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chip{border:1px solid var(--line);background:#fff;font:inherit;font-size:14px;font-weight:600;padding:6px 13px;border-radius:10px;cursor:pointer;color:var(--ink)}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.chip.today{box-shadow:inset 0 -3px 0 var(--acc2)}
+.row{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap}
+select{font:inherit;font-size:13.5px;padding:5px 8px;border-radius:8px;border:1px solid var(--line);background:#fff}
+.sess-h{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+.sess-time{font-weight:800;color:var(--acc);font-size:15px}
+.sess-title{font-weight:700}
+.sess-min{margin-left:auto;font-size:12.5px;color:var(--sub)}
+.wk{margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}
+.wk-h{display:flex;gap:8px;align-items:baseline;margin-bottom:4px}
+.wk-h b{font-size:14.5px}
+.wk-h span{font-size:12.5px;color:var(--sub)}
+details.ex{border-radius:10px}
+details.ex summary{list-style:none;display:flex;align-items:center;gap:10px;padding:6px 4px;cursor:pointer;border-radius:10px}
+details.ex summary::-webkit-details-marker{display:none}
+details.ex summary:hover{background:#FAF9F6}
+details.ex[open] summary{background:#FAF9F6}
+.ck{width:22px;height:22px;accent-color:var(--acc);flex:0 0 auto;cursor:pointer}
+.thumb{width:58px;height:46px;flex:0 0 auto;background:#FBFAF7;border-radius:8px;border:1px solid var(--line)}
+.ex-name{font-weight:600;font-size:14.5px}
+.ex-rx{font-size:13px;color:var(--sub)}
+.ex-txt{flex:1;min-width:0}
+.more{font-size:12px;color:var(--acc);flex:0 0 auto}
+.done .ex-name{text-decoration:line-through;color:var(--sub)}
+.ex-body{padding:6px 4px 12px 36px}
+.frames{display:flex;align-items:center;justify-content:center;gap:6px;background:#FBFAF7;border:1px solid var(--line);border-radius:12px;padding:8px;margin-bottom:8px}
+.frames svg{flex:1;max-width:220px;height:auto}
+.frames .arr{color:var(--acc2);font-size:22px;font-weight:800}
+.flabels{display:flex;justify-content:space-around;font-size:11.5px;color:var(--sub);margin:-4px 0 8px}
+ol.cues{margin:0;padding-left:20px;font-size:14px}
+ol.cues li{margin:2px 0}
+.caution{margin-top:8px;font-size:13px;background:var(--warnbg);color:var(--warn);padding:7px 10px;border-radius:8px}
+.alt-note{font-size:12.5px;color:var(--acc);font-weight:600}
+.prog{height:8px;background:var(--line);border-radius:999px;overflow:hidden;margin:6px 0 2px}
+.prog i{display:block;height:100%;background:var(--acc);border-radius:999px;transition:width .3s}
+.restbox{text-align:center;padding:26px 10px}
+.restbox .big{font-size:20px;font-weight:800;margin-bottom:6px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12.5px;color:var(--sub);font-weight:600}
+td.d{font-weight:800;width:42px}
+td.m{white-space:nowrap;color:var(--sub);font-size:13px}
+.lib-grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:640px){.lib-grid{grid-template-columns:1fr 1fr}}
+.frames.single svg{max-width:200px}
+.att{display:grid;grid-template-columns:62px repeat(7,1fr);gap:4px;font-size:12px;align-items:center}
+.att .hd{color:var(--sub);text-align:center;font-weight:600}
+.att .wl{color:var(--sub);font-size:11.5px;line-height:1.25}
+.cell{aspect-ratio:1;border-radius:8px;background:#EFECE4;border:0;cursor:pointer;font:inherit;font-size:11px;color:var(--sub);display:flex;align-items:center;justify-content:center}
+.cell.on{background:var(--acc);color:#fff;font-weight:700}
+.cell.now{outline:2px solid var(--ink);outline-offset:1px}
+.cell.future{opacity:.45}
+.stats{display:flex;gap:10px;margin-bottom:12px}
+.stat{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.stat b{display:block;font-size:24px;font-weight:800;color:var(--acc)}
+.stat span{font-size:12.5px;color:var(--sub)}
+.pu{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pu label{font-size:12px;color:var(--sub);display:flex;flex-direction:column;gap:3px}
+.pu input{font:inherit;font-size:15px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;width:100%}
+.crit label{display:flex;gap:10px;align-items:flex-start;padding:7px 0;font-size:14.5px;cursor:pointer}
+.crit-msg{margin-top:8px;font-weight:700;font-size:14px}
+.note-list{margin:0;padding-left:20px}
+.note-list li{margin:6px 0}
+.note-list b{color:var(--acc)}
+.foot{margin-top:24px;font-size:12px;color:var(--sub);text-align:center}
+.fig line,.fig path.f,.fig path.b{stroke-linecap:round;stroke-linejoin:round;fill:none}
+.fig .f{stroke:var(--acc);stroke-width:4.4}
+.fig .b{stroke:var(--acc2);stroke-width:4.4}
+.fig .hd{fill:var(--acc)}
+.fig .gr{stroke:#D7D2C6;stroke-width:1.6}
+.fig .prop{stroke:var(--prop);stroke-width:2;fill:none;stroke-linecap:round}
+.fig .wall{fill:var(--wall)}
+.fig .band{stroke:var(--band);stroke-width:1.8;stroke-dasharray:3 2;fill:none}
+.fig .arrow{stroke:var(--band);stroke-width:1.8;fill:none}
+.fig .dash{stroke:var(--band);stroke-width:1.4;stroke-dasharray:2.5 2;fill:none}
+.fig .lbl{fill:var(--band);font-size:8px;font-weight:700;text-anchor:middle;font-family:inherit}
+
+.wrap{padding-bottom:150px!important}
+.mbtn{border:1px solid var(--acc2);background:var(--soft);color:var(--acc);font:inherit;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;cursor:pointer;margin-left:6px;white-space:nowrap}
+#player{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(30,42,45,.97);color:#fff;padding:10px 14px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -4px 18px rgba(0,0,0,.15)}
+#player .pin{max-width:780px;margin:0 auto}
+#player .top{display:flex;align-items:center;gap:12px}
+#pBtn{width:44px;height:44px;border-radius:50%;border:0;background:var(--acc);color:#fff;font-size:18px;cursor:pointer;flex:0 0 auto}
+#pBtn.on{background:#fff;color:var(--ink)}
+#player .ti{flex:1;min-width:0}
+#player .ti b{display:block;font-size:14.5px}
+#player .ti span{font-size:12px;color:#B8C6C3}
+#player input[type=range]{width:90px;accent-color:var(--acc2)}
+#pTog{background:transparent;border:0;color:#B8C6C3;font:inherit;font-size:12px;cursor:pointer}
+#player .modes{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+#player .modes button{border:1px solid #4A5A5D;background:transparent;color:#DDE6E4;font:inherit;font-size:12.5px;padding:5px 10px;border-radius:999px;cursor:pointer}
+#player .modes button.on{background:var(--acc2);border-color:var(--acc2);color:var(--ink);font-weight:700}
+#player .ext{margin-top:8px;font-size:12px;color:#B8C6C3}
+#player .ext a{color:#CFE7E0;margin-right:10px}
+#player.min .modes,#player.min .ext{display:none}
+.eq{display:inline-flex;gap:2px;align-items:flex-end;height:12px;margin-left:6px;vertical-align:middle}
+.eq i{width:3px;background:var(--acc2);height:4px;border-radius:1px}
+#player.playing .eq i{animation:eq .8s infinite ease-in-out}
+#player.playing .eq i:nth-child(2){animation-delay:.2s}#player.playing .eq i:nth-child(3){animation-delay:.4s}
+@keyframes eq{0%,100%{height:3px}50%{height:12px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#E08A3C"/></marker></defs>
+</svg>
+<div class="wrap">
+  <header>
+    <h1>퍼스널 트레이닝 프로그램</h1>
+    <p>발목 강화 우선 · 저충격 유산소 · 맨몸 근력 | 2026.11.16(월) 시작</p>
+    <div class="badges">
+      <span class="badge">푸시업 기준 12개 → 목표 20개</span>
+      <span class="badge w">왼쪽 발목 보호: 점프·고강도 러닝 제외</span>
+      <span class="badge" id="phaseBadge"></span>
+    </div>
+  </header>
+  <nav id="nav">
+    <button data-t="today" class="on">오늘 운동</button>
+    <button data-t="week">주간 일정</button>
+    <button data-t="lib">동작 가이드</button>
+    <button data-t="prog">진행 체크</button>
+    <button data-t="note">코치 노트</button>
+  </nav>
+
+  <section id="today" class="on">
+    <div class="row" style="margin-bottom:10px">
+      <div class="chips" id="dayChips" style="margin:0"></div>
+      <label class="muted">단계
+        <select id="phaseSel">
+          <option value="auto">자동</option>
+          <option value="0">1~2주차</option>
+          <option value="1">3~4주차</option>
+          <option value="2">5주차~</option>
+        </select>
+      </label>
+    </div>
+    <div id="todayBody"></div>
+  </section>
+
+  <section id="week">
+    <h2>주간 일정</h2>
+    <div class="card" id="weekTable"></div>
+    <div class="card">
+      <h3>단계별 변화</h3>
+      <table>
+        <tr><th>단계</th><th>목표</th><th>바뀌는 점</th></tr>
+        <tr><td><b>1~2주차</b></td><td>습관 만들기</td><td>모닝 루틴 1바퀴, 근력 2세트. 주 5회 출석이 목표</td></tr>
+        <tr><td><b>3~4주차</b></td><td>적응</td><td>모닝 루틴 2바퀴, 근력 3세트, 한 발 서기 눈 감고</td></tr>
+        <tr><td><b>5주차~</b></td><td>강도 올리기</td><td>디클라인 푸시업, 한 발 카프 레이즈, 러닝 복귀 테스트</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section id="lib">
+    <h2>동작 가이드</h2>
+    <p class="muted" style="margin-top:-4px">진한 색이 앞쪽 팔·다리, 연한 색이 뒤쪽 팔·다리예요. 왼쪽 그림이 시작 자세, 오른쪽이 끝 자세입니다.</p>
+    <div id="libBody"></div>
+  </section>
+
+  <section id="prog">
+    <h2>진행 체크</h2>
+    <div class="stats">
+      <div class="stat"><b id="stStreak">0</b><span>연속 운동일</span></div>
+      <div class="stat"><b id="stTotal">0</b><span>누적 운동일</span></div>
+      <div class="stat"><b id="stWeek">0/6</b><span>이번 주 출석</span></div>
+    </div>
+    <div class="card">
+      <h3>출석 체크 (8주)</h3>
+      <p class="muted" style="margin:0 0 10px">세션을 다 체크하면 자동으로 채워져요. 칸을 눌러 직접 표시할 수도 있어요. 하루 빠져도 괜찮아요. <b>이틀 연속만 막으세요.</b></p>
+      <div class="att" id="attGrid"></div>
+    </div>
+    <div class="card">
+      <h3>푸시업 기록 (정자세 최대 개수)</h3>
+      <p class="muted" style="margin:0 0 10px">매주 금요일 근력 B 전에 한 번 측정하세요. 시작 기록 12개, 8주 목표 20개.</p>
+      <div class="pu" id="puGrid"></div>
+      <div class="prog" style="margin-top:12px"><i id="puBar" style="width:0"></i></div>
+      <div class="muted" id="puMsg"></div>
+    </div>
+    <div class="card crit">
+      <h3>러닝 복귀 테스트 (왼발 기준)</h3>
+      <p class="muted" style="margin:0 0 6px">세 가지를 모두 통증 없이 통과하면 런-워크로 러닝을 다시 시작해요. 보통 4~6주 걸립니다.</p>
+      <label><input type="checkbox" class="ck" data-run="0"> 한 발 카프 레이즈 20회</label>
+      <label><input type="checkbox" class="ck" data-run="1"> 한 발 서기 눈 감고 30초</label>
+      <label><input type="checkbox" class="ck" data-run="2"> 한 발 제자리 뛰기 10회</label>
+      <div class="crit-msg" id="runMsg"></div>
+    </div>
+  </section>
+
+  <section id="note">
+    <h2>코치 노트</h2>
+    <div class="card">
+      <h3>동기부여 원칙 6가지</h3>
+      <ol class="note-list">
+        <li><b>2분 규칙</b> — 컨디션이 바닥인 날은 매트 펴고 고양이-소 자세만 해도 성공이에요. 습관은 강도가 아니라 횟수로 만들어져요.</li>
+        <li><b>습관 쌓기</b> — "양치 끝나면 → 매트 위로", "씻고 나면 → 요가". 이미 하는 행동 바로 뒤에 붙이세요.</li>
+        <li><b>환경 설계</b> — 전날 밤 매트를 펴두고 운동복을 그 위에 올려두세요. 아침의 나는 결정할 의지력이 거의 없어요.</li>
+        <li><b>두 번 연속 빼먹지 않기</b> — 하루 빠지는 건 괜찮아요. 이틀 연속만 막으면 습관은 유지돼요.</li>
+        <li><b>기록은 출석만</b> — 첫 4주는 몇 개를 했는지가 아니라 했는지 안 했는지만 봐요.</li>
+        <li><b>산책 업그레이드</b> — 가족이나 친구와 산책할 때 빠르게 걷는 구간을 2~3분씩 두세 번 넣어보세요.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>왼쪽 발목 관리</h3>
+      <ol class="note-list">
+        <li>강하게 달린 뒤 일주일씩 절뚝거린다면 발목이 아직 충격을 받을 준비가 안 된 상태예요. <b>정형외과나 스포츠의학과 진단</b>을 한 번 받아보시길 권해요.</li>
+        <li>운동 중 통증이 생기면 그 동작은 바로 멈추세요. 뻐근함은 괜찮지만 찌르는 통증은 신호예요.</li>
+        <li><b>다음 날 아침 규칙</b> — 다음 날 아침 발목이 전날보다 더 아프거나 부어 있으면 그 강도는 아직 이른 거예요.</li>
+        <li>러닝 복귀 후엔 평지, 대화 가능한 속도, 1분 뛰기·2분 걷기부터. 주간 러닝 시간은 10% 넘게 늘리지 않아요.</li>
+        <li>쿠션과 발목 지지력이 좋은 러닝화를 준비하세요.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>영양·회복 3가지</h3>
+      <ol class="note-list">
+        <li><b>아침 단백질</b> — 계란 2개, 그릭요거트, 시간이 없으면 우유 한 잔이라도.</li>
+        <li><b>퇴근길 간식</b> — 견과류 한 줌이나 바나나. 1.5시간 공복이 저녁 과식으로 이어지지 않게.</li>
+        <li><b>수면</b> — 6:10 기상이면 23시 전후 취침으로 7시간 확보. 밤 요가가 그 준비 과정이에요.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>준비물</h3>
+      <ol class="note-list">
+        <li>요가 매트 1장</li>
+        <li>저항밴드 (1~2만 원대, 루프형 + 튜브형) — 밴드 로우와 발목 4방향 운동용</li>
+        <li>균형 쿠션 또는 접은 담요 — 5주차 한 발 서기용</li>
+      </ol>
+    </div>
+  </section>
+
+  <div class="foot">체크 기록은 이 브라우저에만 저장돼요. 다른 기기에서는 새로 시작됩니다.</div>
+</div>
+
+<div id="player" class="min">
+ <div class="pin">
+  <div class="top">
+   <button id="pBtn" aria-label="재생">▶</button>
+   <div class="ti"><b id="pName">운동 음악</b><span id="pSub">세션에 맞는 템포로 자동 생성되는 음악</span></div>
+   <input type="range" id="pVol" min="0" max="100" value="60" aria-label="볼륨">
+   <button id="pTog">모드 ▴</button>
+  </div>
+  <div class="modes" id="pModes"></div>
+  <div class="ext">다른 음악으로 듣기:
+   <a href="https://www.youtube.com/results?search_query=%EC%9A%B4%EB%8F%99+%ED%94%8C%EB%A0%88%EC%9D%B4%EB%A6%AC%EC%8A%A4%ED%8A%B8+120bpm" target="_blank" rel="noopener">유튜브 운동 플리</a>
+   <a href="https://www.youtube.com/results?search_query=%EC%9A%94%EA%B0%80+%EC%88%98%EB%A9%B4+%EC%9D%8C%EC%95%85" target="_blank" rel="noopener">유튜브 요가·수면</a>
+   <a href="https://open.spotify.com/search/workout%20130%20bpm" target="_blank" rel="noopener">스포티파이 130BPM</a>
+  </div>
+ </div>
+</div>
+<script>
+/* ---------- 동작 그림 ---------- */
+function L(a,b,c){return '<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'" class="'+c+'"/>';}
+function toe(f,t){return t===false?null:(t||[f[0]+5,f[1]]);}
+function fig(p){
+  var s='';
+  if(p.rk){s+=L(p.hip,p.rk,'b')+L(p.rk,p.rf,'b');var rt=toe(p.rf,p.rt);if(rt)s+=L(p.rf,rt,'b');}
+  if(p.re){s+=L(p.sh,p.re,'b')+L(p.re,p.rh,'b');}
+  s+= p.mid ? '<path d="M'+p.sh+' Q'+p.mid+' '+p.hip+'" class="f"/>' : L(p.sh,p.hip,'f');
+  s+=L(p.sh,p.head,'f')+'<circle cx="'+p.head[0]+'" cy="'+p.head[1]+'" r="6.5" class="hd"/>';
+  s+=L(p.hip,p.lk,'f')+L(p.lk,p.lf,'f');var lt=toe(p.lf,p.lt);if(lt)s+=L(p.lf,lt,'f');
+  s+=L(p.sh,p.le,'f')+L(p.le,p.lh,'f');
+  return s;
+}
+function svgOf(ex,i,cls){
+  var p=ex.f[i], d=(ex.deco&&ex.deco[i]!==undefined)?ex.deco[i]:(ex.decoAll||'');
+  var g=ex.noGround?'':'<line x1="2" y1="90.5" x2="118" y2="90.5" class="gr"/>';
+  return '<svg viewBox="0 0 120 96" class="fig '+(cls||'')+'" aria-hidden="true">'+g+d+fig(p)+'</svg>';
+}
+function framesHtml(ex){
+  if(ex.f.length===1) return '<div class="frames single">'+svgOf(ex,0)+'</div>';
+  return '<div class="frames">'+svgOf(ex,0)+'<span class="arr">→</span>'+svgOf(ex,1)+'</div><div class="flabels"><span>시작</span><span>끝</span></div>';
+}
+
+var N={head:[60,15],sh:[60,27],hip:[60,54],lk:[61,72],lf:[60,90],rk:[59,72],rf:[58,90],le:[61,40],lh:[63,53],re:[59,40],rh:[57,53]};
+function X(o){var r={};for(var k in N)r[k]=N[k];for(var k2 in o)r[k2]=o[k2];return r;}
+var CHAIR='<path d="M34,30 L34,62 L64,62 M36,62 L36,90 M62,62 L62,90" class="prop"/>';
+
+var EX={
+ ankle_alphabet:{name:'발목 알파벳 쓰기',cat:'ankle',
+  f:[{head:[48,18],sh:[48,30],hip:[48,59],lk:[68,60],lf:[88,62],lt:[91,56],rk:[68,61],rf:[68,90],rt:[74,90],le:[50,43],lh:[60,54],re:[47,43],rh:[58,56]}],
+  decoAll:CHAIR+'<circle cx="96" cy="48" r="9" class="dash"/><text x="96" y="34" class="lbl">A~Z</text>',
+  cues:['의자에 앉아 한쪽 다리를 앞으로 뻗기','무릎은 고정하고 발목만 움직여 발끝으로 A~Z 쓰기','왼발·오른발 각 1회']},
+ calf_raise:{name:'카프 레이즈 (발뒤꿈치 들기)',cat:'ankle',
+  f:[X({le:[75,32],lh:[91,36],re:[74,34],rh:[90,38]}),
+     {head:[60,9],sh:[60,21],hip:[60,48],lk:[61,66],lf:[60,82],lt:[66,90],rk:[59,66],rf:[58,82],rt:[64,90],le:[75,26],lh:[91,30],re:[74,28],rh:[90,32]}],
+  decoAll:'<rect x="92" y="6" width="8" height="84" class="wall"/>',
+  cues:['벽을 가볍게 짚고 서기','1초 동안 뒤꿈치를 최대한 들기','3초 동안 천천히 내리기 — 내려올 때가 핵심'],
+  caution:'발목이 바깥쪽으로 꺾이지 않게 엄지발가락 쪽에 체중을 두세요.'},
+ single_leg_balance:{name:'한 발 서기',cat:'ankle',
+  f:[X({lk:[72,58],lf:[68,76],lt:[73,76],rk:[60,72],rf:[60,90],le:[66,39],lh:[73,49],re:[54,39],rh:[49,49]})],
+  cues:['왼발로 서고 오른 무릎을 골반 높이로 들기','시선은 정면 한 점에 고정','쉬워지면 눈 감기 → 쿠션 위 순서로 난이도 올리기'],
+  caution:'양치하면서 하면 하루 2분이 저절로 쌓여요.'},
+ band_ankle:{name:'밴드 4방향 발목 운동',cat:'ankle',
+  f:[{hip:[30,85],sh:[36,58],head:[39,46],lk:[56,84],lf:[80,85],lt:[85,78],rk:[56,85],rf:[80,86],rt:[85,79],le:[46,68],lh:[60,72],re:[45,69],rh:[59,73]},
+     {hip:[30,85],sh:[36,58],head:[39,46],lk:[56,84],lf:[80,85],lt:[87,88],rk:[56,85],rf:[80,86],rt:[87,89],le:[46,68],lh:[60,72],re:[45,69],rh:[59,73]}],
+  deco:['<line x1="60" y1="72" x2="85" y2="78" class="band"/>','<line x1="60" y1="72" x2="87" y2="87" class="band"/>'],
+  cues:['바닥에 앉아 밴드를 발 앞쪽에 걸기','발끝 당기기·밀기·안쪽·바깥쪽 4방향 각 15회','바깥쪽으로 미는 동작이 접질림 예방의 핵심'],
+  caution:'밴드가 없으면 생략하고 카프 레이즈를 1세트 더 하세요.'},
+ cat_cow:{name:'고양이-소 자세',cat:'mob',
+  f:[{head:[92,77],sh:[84,66],mid:[64,46],hip:[44,66],lk:[44,88],lf:[24,88],lt:[20,89],rk:[46,88],rf:[26,88],rt:[22,89],le:[84,77],lh:[84,88],re:[85,77],rh:[85,88]},
+     {head:[96,56],sh:[84,64],mid:[64,78],hip:[44,64],lk:[44,88],lf:[24,88],lt:[20,89],rk:[46,88],rf:[26,88],rt:[22,89],le:[84,76],lh:[84,88],re:[85,76],rh:[85,88]}],
+  cues:['네발 자세 — 손은 어깨 아래, 무릎은 골반 아래','숨 내쉬며 등을 둥글게 (고양이)','숨 들이쉬며 가슴을 열고 시선은 위로 (소)']},
+ squat:{name:'맨몸 스쿼트',cat:'str',
+  f:[X({le:[73,29],lh:[86,29],re:[72,30],rh:[85,31]}),
+     {head:[69,35],sh:[63,45],hip:[46,66],lk:[66,67],lf:[60,90],rk:[64,69],rf:[58,90],le:[76,44],lh:[89,43],re:[75,46],rh:[88,46]}],
+  cues:['발은 어깨너비, 발끝은 살짝 바깥','의자에 앉듯 엉덩이를 뒤로 빼며 앉기','무릎은 발끝 방향, 뒤꿈치는 바닥에 붙이기'],
+  caution:'왼 무릎이 안쪽으로 모이면 발목이 불안정하다는 신호예요. 앉는 깊이를 줄이세요.'},
+ pushup:{name:'푸시업',cat:'str',
+  f:[{head:[95,56],sh:[86,62],hip:[50,72],lk:[32,79],lf:[14,86],lt:[18,90],rk:[32,80],rf:[14,87],rt:[18,90],le:[86,75],lh:[86,88],re:[85,75],rh:[84,88]},
+     {head:[97,70],sh:[87,76],hip:[50,80],lk:[32,84],lf:[14,86],lt:[18,90],rk:[32,85],rf:[14,87],rt:[18,90],le:[76,71],lh:[86,88],re:[75,72],rh:[84,88]}],
+  cues:['손은 어깨보다 약간 넓게','머리-엉덩이-발목이 일직선','내려갈 때 3초, 올라올 때 1초']},
+ glute_bridge:{name:'글루트 브릿지',cat:'str',
+  f:[{head:[14,82],sh:[26,86],hip:[54,86],lk:[72,68],lf:[80,90],rk:[71,69],rf:[79,90],le:[38,88],lh:[50,88],re:[37,88],rh:[49,88]},
+     {head:[14,82],sh:[26,86],hip:[54,72],lk:[76,62],lf:[82,90],rk:[75,63],rf:[81,90],le:[38,88],lh:[50,88],re:[37,88],rh:[49,88]}],
+  cues:['누워서 무릎 세우고 발은 골반너비','엉덩이를 조이며 어깨-골반-무릎 일직선까지 들기','위에서 1초 멈췄다 천천히 내리기']},
+ plank:{name:'플랭크',cat:'str',
+  f:[{head:[93,60],sh:[83,66],hip:[50,74],lk:[32,80],lf:[14,86],lt:[18,90],rk:[32,81],rf:[14,87],rt:[18,90],le:[83,87],lh:[98,88],re:[82,87],rh:[97,88]}],
+  cues:['팔꿈치는 어깨 바로 아래','배꼽을 등 쪽으로 당겨 허리 처짐 막기','숨은 참지 말고 짧게 계속 쉬기']},
+ hip_flexor:{name:'고관절 앞쪽 스트레칭',cat:'yoga',
+  f:[{lf:[84,90],lk:[82,68],hip:[60,66],rk:[42,88],rf:[24,88],rt:[20,89],sh:[61,39],head:[62,27],le:[66,52],lh:[64,64],re:[57,52],rh:[58,64]}],
+  decoAll:'<path d="M38,56 L52,56" class="arrow" marker-end="url(#ah)"/>',
+  cues:['한쪽 무릎을 바닥에 대고 런지 자세','골반을 앞으로 밀며 뒷다리 허벅지 앞쪽 늘리기','좌우 각 45초, 허리는 꺾지 않기'],
+  caution:'바닥에 닿는 무릎 아래에 수건이나 쿠션을 깔아주세요.'},
+ figure4:{name:'누워서 4자 스트레칭',cat:'yoga',
+  f:[{head:[14,82],sh:[26,86],hip:[54,86],rk:[66,62],rf:[86,66],lk:[76,78],lf:[66,64],lt:false,le:[38,72],lh:[61,66],re:[37,73],rh:[60,67]}],
+  cues:['누워서 한쪽 발목을 반대쪽 무릎 위에 올리기','아래 다리 허벅지를 양손으로 가슴 쪽으로 당기기','좌우 각 45초, 엉덩이 바깥쪽이 늘어나는 느낌']},
+ open_book:{name:'흉추 회전 (오픈북)',cat:'yoga',
+  f:[{head:[16,78],sh:[28,82],hip:[58,84],lk:[72,70],lf:[86,84],rk:[73,72],rf:[87,86],le:[40,68],lh:[52,58],re:[40,70],rh:[52,61]},
+     {head:[16,78],sh:[28,82],hip:[58,84],lk:[72,70],lf:[86,84],rk:[73,72],rf:[87,86],le:[18,68],lh:[6,58],re:[40,70],rh:[52,61]}],
+  deco:['','<path d="M50,50 Q30,30 10,50" class="arrow" marker-end="url(#ah)"/>'],
+  cues:['옆으로 누워 무릎을 90도로 굽히기','위쪽 팔을 책 펼치듯 반대편으로 넘기기','시선은 손을 따라가고, 숨을 내쉬며 2초 유지']},
+ childs_pose:{name:'아기 자세',cat:'yoga',
+  f:[{hip:[40,80],lk:[62,88],lf:[38,89],lt:[33,90],rk:[63,89],rf:[39,90],rt:[34,90],sh:[76,84],head:[86,83],le:[94,87],lh:[110,88],re:[93,88],rh:[109,89]}],
+  cues:['무릎 꿇고 엉덩이를 뒤꿈치 쪽으로','팔을 앞으로 길게 뻗고 이마를 바닥에','1분 동안 등 쪽으로 숨 불어넣기']},
+ breathing:{name:'4-7-8 호흡',cat:'yoga',
+  f:[{hip:[60,84],sh:[60,57],head:[60,45],lk:[42,86],lf:[66,88],lt:false,rk:[78,86],rf:[54,88],rt:false,le:[52,70],lh:[44,82],re:[68,70],rh:[76,82]}],
+  decoAll:'<text x="60" y="26" class="lbl" style="font-size:10px">4 · 7 · 8</text>',
+  cues:['편하게 앉거나 누워서','코로 4초 들이쉬고, 7초 참고, 입으로 8초 내쉬기','4회 반복하고 바로 잠자리로']},
+ reverse_lunge:{name:'리버스 런지',cat:'str',
+  f:[X({le:[67,40],lh:[63,52],re:[53,40],rh:[57,52]}),
+     {head:[50,29],sh:[50,41],hip:[50,67],lk:[70,68],lf:[70,90],rk:[42,86],rf:[22,85],rt:[27,90],le:[57,53],lh:[52,64],re:[44,53],rh:[48,64]}],
+  cues:['한 발을 뒤로 크게 빼며 내려가기','앞 무릎 90도, 뒷무릎은 바닥 직전까지','앞발 뒤꿈치로 밀며 일어나기'],
+  caution:'왼발이 앞에 있을 때 흔들리면 벽이나 의자를 짚고 하세요.'},
+ pike_pushup:{name:'파이크 푸시업',cat:'str',
+  f:[{lf:[30,86],lt:[34,90],rf:[31,87],rt:[35,90],lk:[45,67],rk:[44,68],hip:[60,48],sh:[80,68],head:[85,76],le:[83,78],lh:[86,88],re:[82,78],rh:[85,88]},
+     {lf:[30,86],lt:[34,90],rf:[31,87],rt:[35,90],lk:[45,68],rk:[44,69],hip:[62,50],sh:[78,72],head:[86,82],le:[70,80],lh:[86,88],re:[71,81],rh:[85,88]}],
+  cues:['엉덩이를 높이 들어 ㅅ자 자세','팔꿈치를 굽혀 정수리를 손 사이 바닥 쪽으로','어깨 힘으로 밀어 올리기']},
+ decline_pushup:{name:'디클라인 푸시업',cat:'str',
+  f:[{lf:[16,57],lt:[20,60],rf:[17,58],rt:[21,60],lk:[33,60],rk:[33,61],hip:[51,63],sh:[86,68],head:[95,64],le:[86,78],lh:[86,88],re:[85,78],rh:[84,88]},
+     {lf:[16,57],lt:[20,60],rf:[17,58],rt:[21,60],lk:[33,63],rk:[33,64],hip:[51,70],sh:[86,80],head:[95,77],le:[74,74],lh:[86,88],re:[73,75],rh:[84,88]}],
+  decoAll:'<rect x="4" y="60" width="24" height="30" rx="2" class="wall"/>',
+  cues:['발을 의자나 소파에 올리기','머리부터 발목까지 일직선 유지','내려갈 때 3초 — 5주차부터 진행']},
+ sl_rdl:{name:'싱글레그 데드리프트',cat:'str',
+  f:[{head:[60,15],sh:[60,27],hip:[60,54],lk:[61,72],lf:[60,90],rk:[56,72],rf:[50,87],rt:[54,90],le:[61,40],lh:[62,53],re:[59,40],rh:[58,53]},
+     {lf:[56,90],lk:[57,72],hip:[55,54],sh:[82,58],head:[93,60],rk:[37,53],rf:[19,52],rt:[19,57],le:[82,70],lh:[83,82],re:[81,71],rh:[82,83]}],
+  cues:['한 발로 서서 무릎은 살짝 굽히기','상체를 숙이며 뒷다리를 뒤로 길게 뻗기','상체와 뒷다리가 일자가 되면 엉덩이 힘으로 일어나기'],
+  caution:'발목 균형 훈련에도 좋은 동작이에요. 처음엔 벽을 한 손으로 짚고 하세요.'},
+ band_row:{name:'밴드 로우',cat:'str',
+  f:[{hip:[28,85],sh:[32,58],head:[34,46],lk:[54,84],lf:[78,85],lt:[82,79],rk:[54,85],rf:[78,86],rt:[82,80],le:[46,62],lh:[60,66],re:[45,63],rh:[59,67]},
+     {hip:[28,85],sh:[32,58],head:[34,46],lk:[54,84],lf:[78,85],lt:[82,79],rk:[54,85],rf:[78,86],rt:[82,80],le:[22,64],lh:[36,66],re:[21,65],rh:[35,67]}],
+  deco:['<path d="M60,66 L81,81" class="band"/>','<path d="M36,66 L81,81" class="band"/>'],
+  cues:['바닥에 앉아 밴드를 발에 걸기','가슴을 펴고 팔꿈치를 뒤로 당기기','날개뼈를 모은 채 1초 멈추기'],
+  caution:'밴드가 없으면 튼튼한 식탁 아래 누워 가장자리를 잡고 몸을 끌어올리는 테이블 로우로 대체하세요.'},
+ dead_bug:{name:'데드버그',cat:'str',
+  f:[{head:[14,82],sh:[26,86],hip:[54,86],lk:[56,64],lf:[76,64],rk:[55,65],rf:[75,65],le:[27,72],lh:[28,58],re:[25,72],rh:[26,58]},
+     {head:[14,82],sh:[26,86],hip:[54,86],lk:[74,80],lf:[94,82],rk:[55,65],rf:[75,65],le:[27,72],lh:[28,58],re:[14,80],rh:[2,80]}],
+  cues:['누워서 팔은 천장으로, 무릎은 90도','허리를 바닥에 붙인 채 반대쪽 팔·다리를 천천히 뻗기','숨을 내쉬며 뻗고, 돌아와서 반대쪽']},
+ side_plank:{name:'사이드 플랭크',cat:'str',
+  f:[{lf:[14,86],lt:[18,90],rf:[16,87],rt:[19,90],lk:[32,80],rk:[33,81],hip:[50,73],sh:[82,62],head:[91,56],re:[83,86],rh:[97,88],le:[83,47],lh:[84,33]}],
+  cues:['옆으로 누워 팔꿈치를 어깨 아래에','골반을 들어 머리-발목 일직선','힘들면 아래쪽 무릎을 바닥에 대고']},
+ power_walk:{name:'파워워킹',cat:'cardio',
+  f:[{lf:[72,90],lk:[67,72],hip:[60,54],rk:[52,72],rf:[46,88],rt:[51,90],sh:[62,27],head:[63,15],le:[70,36],lh:[78,30],re:[52,38],rh:[46,46]}],
+  cues:['평소보다 보폭을 조금 넓게','팔을 90도로 굽혀 크게 흔들기','숨이 차지만 대화는 가능한 속도']},
+ incline_walk:{name:'경사 걷기',cat:'cardio',noGround:true,
+  f:[{lf:[74,85],lt:[80,84],lk:[70,68],hip:[60,54],rk:[52,72],rf:[46,89],rt:[51,88],sh:[64,27],head:[66,15],le:[72,36],lh:[79,45],re:[56,38],rh:[50,48]}],
+  decoAll:'<line x1="0" y1="96" x2="120" y2="78" class="gr"/>',
+  cues:['러닝머신 경사 5~8% 또는 완만한 오르막','상체를 세우고 손잡이는 잡지 않기','종아리·엉덩이에 힘이 들어오는 느낌']},
+ bike:{name:'실내자전거',cat:'cardio',
+  f:[{hip:[50,48],sh:[70,28],head:[78,20],le:[78,38],lh:[86,44],re:[77,39],rh:[85,45],lk:[68,56],lf:[62,72],rk:[60,64],rf:[56,82]}],
+  decoAll:'<circle cx="30" cy="76" r="13" class="prop"/><circle cx="92" cy="76" r="13" class="prop"/><path d="M30,76 L50,52 L84,54 L92,76 M50,52 L60,76 L84,54 M84,54 L86,42 M44,50 L56,50" class="prop"/><circle cx="60" cy="76" r="3" class="prop"/>',
+  cues:['안장 높이는 페달이 가장 아래일 때 무릎이 살짝 굽는 정도','심박수: 평소 구간 111~130bpm, 빠른 구간 140~148bpm(5주차~ 150~157bpm)','시작·끝 5분은 100~110bpm으로 천천히 — 발목 충격이 거의 없는 1순위 유산소']}
+};
+
+/* ---------- 프로그램 ---------- */
+// rx: [1~2주차, 3~4주차, 5주차~]
+var W={
+ ankle:{title:'발목 강화',min:5,items:[
+   ['ankle_alphabet',['좌우 A~Z 1회','좌우 A~Z 1회','좌우 A~Z 1회']],
+   ['calf_raise',['양발 15회 × 2','양발 15회 + 한 발 8회','한 발 12~15회 × 2']],
+   ['single_leg_balance',['왼발 30초 × 2 (눈 뜨고)','왼발 30초 × 2 (눈 감고)','왼발 30초 × 2 (쿠션 위)']],
+   ['band_ankle',['4방향 각 15회 (밴드 있으면)','4방향 각 15회','4방향 각 20회']]]},
+ morning:{title:'모닝 루틴',min:10,sets:['1바퀴','2바퀴','2바퀴'],items:[
+   ['cat_cow',['10회','10회','10회']],
+   ['squat',['15회','15회','20회']],
+   ['pushup',['10회','10회','12회']],
+   ['glute_bridge',['15회','15회','20회']],
+   ['plank',['30초','30초','45초']]]},
+ yoga:{title:'취침 전 이완 요가',min:15,items:[
+   ['hip_flexor',['좌우 각 45초','좌우 각 45초','좌우 각 60초']],
+   ['figure4',['좌우 각 45초','좌우 각 45초','좌우 각 60초']],
+   ['open_book',['좌우 각 8회','좌우 각 8회','좌우 각 10회']],
+   ['childs_pose',['1분','1분','1분']],
+   ['breathing',['4회','4회','4회']]]},
+ cardio:{title:'저충격 유산소 (택1)',min:30,alt:true,items:[
+   ['bike',['30분 · 대화 가능한 강도','35분 · 1분 빠르게 + 2분 보통 반복','40분 · 2분 빠르게 + 1분 보통 반복']],
+   ['incline_walk',['30분 · 경사 5%','35분 · 경사 5~8%','40분 · 경사 8%']],
+   ['power_walk',['30분 · 대화 가능한 속도','35분 · 1분 빠르게 + 2분 보통 반복','40분 · 2분 빠르게 + 1분 보통 반복']]]},
+ strA:{title:'근력 A — 하체 + 미는 근육',min:20,sets:['2세트','3세트','3세트'],items:[
+   ['squat',['15회','15회','20회']],
+   ['reverse_lunge',['좌우 10회','좌우 10회','좌우 12회']],
+   ['pushup',['10회 · 내릴 때 3초','10회 · 내릴 때 3초',''],[0,1]],
+   ['decline_pushup',['','','10회 · 내릴 때 3초'],[2]],
+   ['pike_pushup',['8회','8회','10회']],
+   ['plank',['45초','45초','60초']]]},
+ strB:{title:'근력 B — 몸 뒤쪽 + 당기는 근육',min:25,sets:['2세트','3세트','3세트'],items:[
+   ['sl_rdl',['좌우 10회','좌우 10회','좌우 12회']],
+   ['glute_bridge',['20회','20회','20회 · 위에서 2초']],
+   ['band_row',['12회','12회','15회']],
+   ['dead_bug',['좌우 10회','좌우 10회','좌우 12회']],
+   ['side_plank',['좌우 30초','좌우 30초','좌우 40초']]]},
+ walk:{title:'긴 걷기 (평지)',min:40,items:[
+   ['power_walk',['40분','50분','60분']]]},
+ grease:{title:'틈틈이 푸시업',min:0,items:[
+   ['pushup',['5회 × 하루 6~8번','5회 × 하루 6~8번','6회 × 하루 6~8번']]]}
+};
+var DAYS={
+ 1:[{t:'09:00',name:'주간 메인 운동',ws:['ankle','cardio','strA']},{t:'근무 중',name:'화장실 갈 때마다',ws:['grease']}],
+ 2:[{t:'06:15',name:'기상 직후',ws:['ankle','morning']},{t:'21:00',name:'귀가 후 씻고 나서',ws:['yoga']}],
+ 3:[{t:'06:15',name:'기상 직후',ws:['ankle','morning']},{t:'21:00',name:'귀가 후 씻고 나서',ws:['yoga']}],
+ 4:[{t:'06:15',name:'기상 직후',ws:['ankle','morning']},{t:'21:00',name:'귀가 후 씻고 나서',ws:['yoga']}],
+ 5:[{t:'07:30',name:'재택 출근 전',ws:['ankle','strB']},{t:'근무 중',name:'화장실 갈 때마다',ws:['grease']}],
+ 6:[{t:'오전',name:'여유 있게',ws:['ankle','walk']}],
+ 0:[]
+};
+var DN=['일','월','화','수','목','금','토'], ORDER=[1,2,3,4,5,6,0];
+
+/* ---------- 상태 ---------- */
+var KEY='pt-program-v1', S={checks:{},att:{},pu:{},run:[false,false,false],ph:'auto'};
+try{var raw=localStorage.getItem(KEY);if(raw){var o=JSON.parse(raw);for(var k in o)S[k]=o[k];}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+
+var START=new Date(2026,10,16);
+var TODAY=new Date();TODAY.setHours(0,0,0,0);
+function ymd(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function addD(d,n){var r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function weekNo(d){return Math.max(1,Math.floor((d-START)/864e5/7)+1);}
+function phase(){if(S.ph!=='auto')return +S.ph;var w=weekNo(TODAY);return w<=2?0:(w<=4?1:2);}
+var MON=addD(TODAY,-((TODAY.getDay()+6)%7));
+function dateFor(dow){return addD(MON,(dow+6)%7);}
+var selDow=TODAY.getDay();
+
+function visItems(wk,ph){return W[wk].items.filter(function(it){return !it[2]||it[2].indexOf(ph)>=0;});}
+function wkDone(wk,ph,c){var its=visItems(wk,ph),n=0;its.forEach(function(it){if(c[wk+'.'+it[0]])n++;});return W[wk].alt?n>0:n===its.length;}
+function sessDone(s,ph,c){return s.ws.length>0&&s.ws.every(function(w){return wkDone(w,ph,c);});}
+function dayAuto(ds,dow){var c=S.checks[ds]||{},ph=phase();return (DAYS[dow]||[]).some(function(s){return s.ws[0]!=='grease'&&sessDone(s,ph,c);});}
+function dayDone(d){var ds=ymd(d);if(S.att[ds]===true)return true;if(S.att[ds]===false)return false;return dayAuto(ds,d.getDay());}
+
+/* ---------- 오늘 탭 ---------- */
+function renderChips(){
+  document.getElementById('dayChips').innerHTML=ORDER.map(function(d){
+    return '<button class="chip'+(d===selDow?' on':'')+(d===TODAY.getDay()?' today':'')+'" data-dow="'+d+'">'+DN[d]+'</button>';}).join('');
+}
+function exRow(wk,it,ph,c){
+  var ex=EX[it[0]],id=wk+'.'+it[0],on=!!c[id],rx=it[1][ph];
+  return '<details class="ex'+(on?' done':'')+'"><summary>'+
+    '<input type="checkbox" class="ck" data-id="'+id+'"'+(on?' checked':'')+' onclick="event.stopPropagation()">'+
+    svgOf(ex,ex.f.length-1,'thumb')+
+    '<div class="ex-txt"><div class="ex-name">'+ex.name+'</div><div class="ex-rx">'+rx+'</div></div><span class="more">동작 보기</span></summary>'+
+    '<div class="ex-body">'+framesHtml(ex)+'<ol class="cues">'+ex.cues.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol>'+
+    (ex.caution?'<div class="caution">'+ex.caution+'</div>':'')+'</div></details>';
+}
+function renderToday(){
+  renderChips();
+  var ph=phase(),d=dateFor(selDow),ds=ymd(d),c=S.checks[ds]||{},plan=DAYS[selDow];
+  document.getElementById('phaseBadge').textContent=weekNo(TODAY)+'주차 · '+['습관 만들기','적응','강도 올리기'][ph]+' 단계';
+  document.getElementById('phaseSel').value=S.ph;
+  var h='<div class="muted" style="margin-bottom:8px">'+(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+DN[selDow]+')'+(ds===ymd(TODAY)?' · 오늘':'')+'</div>';
+  if(!plan.length){
+    h+='<div class="card restbox"><div class="big">오늘은 완전 휴식일</div><div class="muted">근육은 쉬는 동안 자라요. 가벼운 산책은 좋고, 원하면 밤에 이완 요가만 해도 됩니다.</div></div>';
+    h+='<div class="card"><div class="wk-h"><b>선택: 이완 요가</b><span>15분</span><button class="mbtn" data-mode="calm">♪ 이완</button></div>'+visItems('yoga',ph).map(function(it){return exRow('yoga',it,ph,c);}).join('')+'</div>';
+    document.getElementById('todayBody').innerHTML=h;return;
+  }
+  var tot=0,done=0;
+  plan.forEach(function(s){s.ws.forEach(function(w){if(w==='grease')return;var its=visItems(w,ph);if(W[w].alt){tot++;if(wkDone(w,ph,c))done++;}else{tot+=its.length;its.forEach(function(it){if(c[w+'.'+it[0]])done++;});}});});
+  h+='<div class="card" style="padding:12px 16px"><div class="row"><b>오늘 진행률</b><span class="muted">'+done+' / '+tot+'</span></div><div class="prog"><i style="width:'+(tot?Math.round(done/tot*100):0)+'%"></i></div>'+
+     (done===tot&&tot>0?'<div style="color:var(--acc);font-weight:700;font-size:14px;margin-top:4px">오늘 운동 완료! 출석 체크에 자동으로 기록됐어요.</div>':'<div class="muted" style="font-size:12.5px">힘든 날은 첫 동작 하나만 해도 성공이에요.</div>')+'</div>';
+  plan.forEach(function(s){
+    var mins=s.ws.reduce(function(a,w){return a+W[w].min;},0);
+    h+='<div class="card"><div class="sess-h"><span class="sess-time">'+s.t+'</span><span class="sess-title">'+s.name+'</span><span class="sess-min">'+(mins?'약 '+mins+'분':'짧게 여러 번')+(sessMode(s)?'<button class="mbtn" data-mode="'+sessMode(s)+'">♪ '+MODES[sessMode(s)].name+'</button>':'')+'</span></div>';
+    s.ws.forEach(function(w,i){
+      var wk=W[w];
+      h+='<div class="'+(i?'wk':'')+'" style="'+(i?'':'margin-top:2px')+'"><div class="wk-h"><b>'+wk.title+'</b><span>'+(wk.sets?wk.sets[ph]+' 반복':'')+(wk.min?(wk.sets?' · ':'')+wk.min+'분':'')+'</span></div>'+
+        (wk.alt?'<div class="alt-note">셋 중 하나만 하면 돼요</div>':'')+
+        visItems(w,ph).map(function(it){return exRow(w,it,ph,c);}).join('')+'</div>';
+    });
+    h+='</div>';
+  });
+  document.getElementById('todayBody').innerHTML=h;
+}
+
+/* ---------- 주간 ---------- */
+function renderWeek(){
+  var ph=phase();
+  var rows=ORDER.map(function(d){
+    var p=DAYS[d];
+    if(!p.length)return '<tr><td class="d">'+DN[d]+'</td><td class="m">—</td><td>완전 휴식 (가벼운 산책, 이완 요가 선택)</td></tr>';
+    return p.map(function(s,i){
+      return '<tr>'+(i?'<td></td>':'<td class="d" rowspan="1">'+DN[d]+'</td>')+'<td class="m">'+s.t+'</td><td>'+s.ws.map(function(w){return W[w].title+(W[w].sets?' '+W[w].sets[ph]:'');}).join(' + ')+
+        '<div class="muted" style="font-size:12px">'+(s.ws.reduce(function(a,w){return a+W[w].min;},0)||'틈틈이')+(s.ws[0]==='grease'?'':'분')+'</div></td></tr>';
+    }).join('');
+  }).join('');
+  document.getElementById('weekTable').innerHTML='<table><tr><th>요일</th><th>시간</th><th>내용</th></tr>'+rows+'</table>';
+}
+
+/* ---------- 동작 가이드 ---------- */
+function renderLib(){
+  var cats=[['ankle','발목 강화 (매일)'],['mob','모닝 가동성'],['str','근력'],['yoga','저녁 이완 요가'],['cardio','저충격 유산소']];
+  document.getElementById('libBody').innerHTML=cats.map(function(c){
+    var keys=Object.keys(EX).filter(function(k){return EX[k].cat===c[0];});
+    return '<h3 style="margin:18px 0 8px">'+c[1]+'</h3><div class="lib-grid">'+keys.map(function(k){var ex=EX[k];
+      return '<div class="card lib-card" style="margin:0"><h3>'+ex.name+'</h3>'+framesHtml(ex)+'<ol class="cues">'+ex.cues.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol>'+(ex.caution?'<div class="caution">'+ex.caution+'</div>':'')+'</div>';}).join('')+'</div>';
+  }).join('');
+}
+
+/* ---------- 진행 ---------- */
+function renderProg(){
+  var g='<div></div>'+ORDER.map(function(d){return '<div class="hd">'+DN[d]+'</div>';}).join('');
+  var total=0;
+  for(var w=0;w<8;w++){
+    var ws=addD(START,w*7);
+    g+='<div class="wl"><b>'+(w+1)+'주차</b><br>'+(ws.getMonth()+1)+'/'+ws.getDate()+'</div>';
+    for(var i=0;i<7;i++){
+      var d=addD(ws,i),ds=ymd(d),on=dayDone(d),fut=d>TODAY;
+      if(on)total++;
+      g+='<button class="cell'+(on?' on':'')+(ds===ymd(TODAY)?' now':'')+(fut?' future':'')+'" data-att="'+ds+'">'+(on?'✓':d.getDate())+'</button>';
+    }
+  }
+  document.getElementById('attGrid').innerHTML=g;
+  var st=0,d0=TODAY;if(!dayDone(d0))d0=addD(d0,-1);
+  while(d0>=START){if(dayDone(d0))st++;else if(d0.getDay()!==0)break;d0=addD(d0,-1);}
+  var wk=0;for(var j=0;j<7;j++){if(dayDone(addD(MON,j)))wk++;}
+  document.getElementById('stStreak').textContent=st;
+  document.getElementById('stTotal').textContent=total;
+  document.getElementById('stWeek').textContent=wk+'/6';
+  var pu='',best=12;
+  for(var k=1;k<=8;k++){var v=S.pu[k]||'';if(+v>best)best=+v;pu+='<label>'+k+'주차<input type="number" min="0" inputmode="numeric" data-pu="'+k+'" value="'+v+'" placeholder="-"></label>';}
+  document.getElementById('puGrid').innerHTML=pu;
+  document.getElementById('puBar').style.width=Math.min(100,Math.round((best-12)/8*100))+'%';
+  document.getElementById('puMsg').textContent='최고 기록 '+best+'개 · 목표까지 '+Math.max(0,20-best)+'개'+(best>=20?' — 목표 달성! 다음 목표는 25개예요.':'');
+  document.querySelectorAll('[data-run]').forEach(function(el){el.checked=!!S.run[+el.dataset.run];});
+  var n=S.run.filter(Boolean).length;
+  document.getElementById('runMsg').innerHTML=n===3?'<span style="color:var(--acc)">통과! 다음 월요일 유산소를 런-워크(1분 뛰기 + 2분 걷기 × 8회)로 바꿔보세요. 다음 날 아침 규칙을 꼭 지키세요.</span>':'<span class="muted">'+n+' / 3 통과 · 아직은 저충격 유산소로 진행해요.</span>';
+}
+
+/* ---------- 이벤트 ---------- */
+document.getElementById('nav').addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('nav button').forEach(function(x){x.classList.toggle('on',x===b);});
+  document.querySelectorAll('section').forEach(function(s){s.classList.toggle('on',s.id===b.dataset.t);});
+  if(b.dataset.t==='prog')renderProg();if(b.dataset.t==='week')renderWeek();
+  window.scrollTo({top:0});
+});
+document.getElementById('dayChips').addEventListener('click',function(e){var b=e.target.closest('[data-dow]');if(!b)return;selDow=+b.dataset.dow;renderToday();});
+document.getElementById('phaseSel').addEventListener('change',function(e){S.ph=e.target.value;save();renderToday();renderWeek();});
+document.addEventListener('change',function(e){
+  var t=e.target;
+  if(t.dataset.id){var ds=ymd(dateFor(selDow));S.checks[ds]=S.checks[ds]||{};if(t.checked)S.checks[ds][t.dataset.id]=true;else delete S.checks[ds][t.dataset.id];save();
+    var open=[];document.querySelectorAll('#todayBody details').forEach(function(d,i){if(d.open)open.push(i);});
+    renderToday();var ds2=document.querySelectorAll('#todayBody details');open.forEach(function(i){if(ds2[i])ds2[i].open=true;});}
+  if(t.dataset.pu){S.pu[t.dataset.pu]=t.value;save();renderProg();}
+  if(t.dataset.run!==undefined){S.run[+t.dataset.run]=t.checked;save();renderProg();}
+});
+document.getElementById('attGrid').addEventListener('click',function(e){
+  var b=e.target.closest('[data-att]');if(!b)return;var ds=b.dataset.att,p=ds.split('-'),d=new Date(+p[0],+p[1]-1,+p[2]);
+  S.att[ds]=!dayDone(d);if(S.att[ds]===dayAuto(ds,d.getDay()))delete S.att[ds];save();renderProg();
+});
+
+
+/* ---------- 운동 음악 (Web Audio로 실시간 생성) ---------- */
+var MODES={
+ calm:{name:'이완',bpm:64,desc:'요가·호흡용 잔잔한 앰비언트'},
+ warm:{name:'워밍업',bpm:104,desc:'아침 루틴용 가벼운 비트'},
+ power:{name:'파워',bpm:124,desc:'근력 운동·빠르게 걷기 템포'},
+ cardio:{name:'유산소',bpm:132,desc:'자전거·경사 걷기용 업템포'}
+};
+function sessMode(s){var w=s.ws;if(w.indexOf('yoga')>=0)return 'calm';if(w.indexOf('cardio')>=0)return 'cardio';
+ if(w.indexOf('strA')>=0||w.indexOf('strB')>=0||w.indexOf('walk')>=0)return 'power';if(w.indexOf('morning')>=0)return 'warm';return null;}
+var AC=null,MST=null,NOISE=null,timer=null,step=0,nextT=0,curMode='warm',playing=false;
+var CH=[[57,60,64],[53,57,60],[52,55,60],[55,59,62]], BS=[45,41,48,43], PENTA=[69,72,74,76,79,81,84];
+function mtof(m){return 440*Math.pow(2,(m-69)/12);}
+function initAudio(){
+ AC=new (window.AudioContext||window.webkitAudioContext)();
+ var comp=AC.createDynamicsCompressor();comp.threshold.value=-14;comp.ratio.value=4;
+ MST=AC.createGain();MST.gain.value=vol();MST.connect(comp);comp.connect(AC.destination);
+ var len=AC.sampleRate,b=AC.createBuffer(1,len,AC.sampleRate),d=b.getChannelData(0);for(var i=0;i<len;i++)d[i]=Math.random()*2-1;NOISE=b;
+}
+function vol(){return (+document.getElementById('pVol').value/100)*0.8;}
+function env(g,t,peak,a,dec){g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(peak,t+a);g.gain.exponentialRampToValueAtTime(0.0001,t+a+dec);}
+function kick(t){var o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(42,t+0.13);env(g,t,0.9,0.003,0.32);o.connect(g);g.connect(MST);o.start(t);o.stop(t+0.4);}
+function noiseHit(t,type,f,peak,dec){var n=AC.createBufferSource();n.buffer=NOISE;var fl=AC.createBiquadFilter();fl.type=type;fl.frequency.value=f;var g=AC.createGain();env(g,t,peak,0.002,dec);n.connect(fl);fl.connect(g);g.connect(MST);n.start(t,Math.random()*0.5);n.stop(t+dec+0.05);}
+function hat(t,v){noiseHit(t,'highpass',7500,v,0.045);}
+function clap(t,v){noiseHit(t,'bandpass',1600,v,0.16);}
+function bass(t,m,dur){var o=AC.createOscillator(),f=AC.createBiquadFilter(),g=AC.createGain();o.type='sawtooth';o.frequency.value=mtof(m);f.type='lowpass';f.frequency.value=380;env(g,t,0.22,0.005,dur);o.connect(f);f.connect(g);g.connect(MST);o.start(t);o.stop(t+dur+0.05);}
+function pluck(t,m,v,dec){var o=AC.createOscillator(),g=AC.createGain();o.type='triangle';o.frequency.value=mtof(m);env(g,t,v,0.004,dec);o.connect(g);g.connect(MST);o.start(t);o.stop(t+dec+0.05);}
+function pad(t,notes,dur,cut,v){
+ var f=AC.createBiquadFilter();f.type='lowpass';f.frequency.value=cut;var g=AC.createGain();
+ g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(v,t+Math.min(0.6,dur*0.3));g.gain.setValueAtTime(v,t+dur*0.75);g.gain.linearRampToValueAtTime(0.0001,t+dur);
+ f.connect(g);g.connect(MST);
+ notes.forEach(function(m){[-7,7].forEach(function(dt){var o=AC.createOscillator();o.type='sawtooth';o.frequency.value=mtof(m);o.detune.value=dt;o.connect(f);o.start(t);o.stop(t+dur+0.05);});});
+}
+function sched(s,t){
+ var M=curMode,bpm=MODES[M].bpm,st=60/bpm/4,bar=Math.floor(s/16)%4,i=s%16,ch=CH[bar],bd=st*16,brk=(Math.floor(s/16)%8)===7;
+ if(M==='calm'){
+  if(i===0)pad(t,ch,bd*1.02,650,0.05);
+  if(i%4===0&&Math.random()<0.4)pluck(t,PENTA[Math.floor(Math.random()*PENTA.length)],0.07,1.6);
+  if(i===0)bass(t,BS[bar],bd*0.9*0.5);
+  return;
+ }
+ if(i===0)pad(t,ch,bd,M==='warm'?900:1200,0.022);
+ if(M==='warm'){
+  if(!brk&&(i===0||i===8||i===10))kick(t);
+  if(i%4===2)hat(t,0.12);
+  if(i===4||i===12)clap(t,0.18);
+  if(i%8===0)bass(t,BS[bar],st*6);
+  if(i%4===0)pluck(t,ch[(i/4)%3]+12,0.07,0.35);
+ }else{
+  var four=(i%4===0);
+  if(!brk&&four)kick(t);
+  if(M==='cardio'){if(i%2===0)hat(t,i%4===2?0.16:0.07);}else{if(i%4===2)hat(t,0.15);else if(i%2===0)hat(t,0.05);}
+  if(i===4||i===12)clap(t,0.28);
+  if(M==='cardio'?(i%2===1):(i%4===2))bass(t,BS[bar]+(i%8===6?12:0),st*1.6);
+  var ai=M==='cardio'?2:4;if(i%ai===0)pluck(t,ch[(i/ai)%3]+12+(bar===3&&i>=8?2:0),0.06,0.22);
+ }
+}
+function tick(){var st=60/MODES[curMode].bpm/4;while(nextT<AC.currentTime+0.15){sched(step,nextT);nextT+=st;step++;}}
+function play(){
+ if(!AC)initAudio();
+ if(AC.state==='suspended')AC.resume();
+ MST.gain.cancelScheduledValues(AC.currentTime);MST.gain.setValueAtTime(vol(),AC.currentTime);
+ step=0;nextT=AC.currentTime+0.06;clearInterval(timer);timer=setInterval(tick,25);playing=true;updP();
+}
+function stop(){clearInterval(timer);timer=null;playing=false;if(MST&&AC){MST.gain.setTargetAtTime(0.0001,AC.currentTime,0.08);}updP();}
+function setMode(m,start){curMode=m;try{S.music=m;save();}catch(e){}if(start||playing){if(playing&&MST){MST.gain.setTargetAtTime(0.0001,AC.currentTime,0.05);}setTimeout(play,playing?150:0);}updP();}
+function updP(){
+ var M=MODES[curMode];
+ document.getElementById('pName').innerHTML=M.name+' · '+M.bpm+' BPM<span class="eq"><i></i><i></i><i></i></span>';
+ document.getElementById('pSub').textContent=M.desc;
+ var b=document.getElementById('pBtn');b.textContent=playing?'❚❚':'▶';b.classList.toggle('on',playing);b.setAttribute('aria-label',playing?'일시정지':'재생');
+ document.getElementById('player').classList.toggle('playing',playing);
+ document.getElementById('pModes').innerHTML=Object.keys(MODES).map(function(k){return '<button data-pm="'+k+'" class="'+(k===curMode?'on':'')+'">'+MODES[k].name+' '+MODES[k].bpm+'</button>';}).join('');
+}
+(function(){
+ var td=DAYS[TODAY.getDay()]||[],hr=new Date().getHours(),pick=null;
+ td.forEach(function(s){var m=sessMode(s);if(!m)return;if(!pick)pick=m;if(m==='calm'&&hr>=19)pick='calm';});
+ curMode=pick||S.music||'calm';
+})();
+document.getElementById('pBtn').addEventListener('click',function(){try{playing?stop():play();}catch(e){document.getElementById('pSub').textContent='이 브라우저에서는 음악 재생이 지원되지 않아요.';}});
+document.getElementById('pVol').addEventListener('input',function(){if(MST&&playing)MST.gain.setTargetAtTime(vol(),AC.currentTime,0.05);});
+document.getElementById('pTog').addEventListener('click',function(){var p=document.getElementById('player');p.classList.toggle('min');this.textContent=p.classList.contains('min')?'모드 ▴':'접기 ▾';});
+document.getElementById('pModes').addEventListener('click',function(e){var b=e.target.closest('[data-pm]');if(b)setMode(b.dataset.pm,false);});
+document.addEventListener('click',function(e){var b=e.target.closest('.mbtn');if(!b)return;try{setMode(b.dataset.mode,true);}catch(err){}});
+updP();
+
+renderToday();renderWeek();renderLib();
+</script>
+</body>
+</html>
